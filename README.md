@@ -201,13 +201,18 @@ The notebook runs from top to bottom and shows each stage as it goes:
 
 ### Classify a new photo
 
-The upload cell near the end (`files.upload()`) takes a photo, and the cell after it loads the photo at 300 x 300 and
-scales it to [0, 1] as `img_array`. In the same session, this labels it with the trained model:
+The last three cells label a photo of your own:
+1. The upload cell (`files.upload()`) takes the photo.
+2. The next cell loads it at 300 x 300 and scales it to [0, 1] as `img_array`.
+3. The last cell runs the trained model on it. It reads the class order from the training generator:
 
 ```python
-probs = model.predict(img_array)[0]
 labels = {index: name for name, index in train_generator.class_indices.items()}  # 0 cocci, 1 healthy, 2 salmo
-print(labels[int(np.argmax(probs))], f"{probs.max():.0%}")
+display_names = {'cocci': 'Coccidiosis Infected', 'healthy': 'Healthy Chicken', 'salmo': 'Salmonella Infected'}
+
+probs = model.predict(img_array)[0]
+predicted = labels[int(np.argmax(probs))]
+print(f"Predicted class: {display_names[predicted]} ({probs.max():.0%})")
 ```
 
 ## Project structure
