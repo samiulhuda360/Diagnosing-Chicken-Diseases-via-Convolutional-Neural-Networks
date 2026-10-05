@@ -40,6 +40,7 @@ followed by 2 x 2 max pooling, so the feature maps shrink from 300 x 300 to 35 x
 from 32 to 128.
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#e6f2ef", "primaryBorderColor": "#2f6f68", "primaryTextColor": "#13302c", "lineColor": "#5f7471", "secondaryColor": "#f3efe6", "tertiaryColor": "#f7f8f6"}}}%%
 flowchart TD
     IN["Input photo<br/>300 x 300 x 3<br/>pixels scaled to 0-1"]
     B1["Block 1: Conv2D<br/>32 filters, 3 x 3, ReLU<br/>MaxPooling 2 x 2<br/>output 149 x 149 x 32"]
@@ -57,6 +58,7 @@ The model is compiled with the Adam optimiser and categorical cross-entropy loss
 ## How it works
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#e6f2ef", "primaryBorderColor": "#2f6f68", "primaryTextColor": "#13302c", "lineColor": "#5f7471", "secondaryColor": "#f3efe6", "tertiaryColor": "#f7f8f6"}}}%%
 flowchart TD
     ZIP["Image archive in Drive<br/>cocci, healthy, salmo"] --> EXT["Unzip into the<br/>Colab session"]
     EXT --> CHK["Data checks<br/>images per class, sizes,<br/>colour histograms,<br/>unreadable files removed"]
