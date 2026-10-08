@@ -5,20 +5,60 @@
 ![Task](https://img.shields.io/badge/task-image%20classification-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-**A deep learning image classifier that screens chickens for Coccidiosis and Salmonella from photos of their
-droppings.** A convolutional neural network, trained from scratch in TensorFlow/Keras on 2,536 photos, sorts each
-image into Coccidiosis, Salmonella or healthy with 84.8% validation accuracy. Both diseases change the appearance of
-droppings, so a photo gives poultry farms and vets a cheap, non-invasive first check. The notebook is also a complete
-computer-vision workflow for reviewers: data checks, augmentation, training and evaluation in one place.
-
 ![Five photos from the dataset labelled Coccidiosis: yellow-brown droppings photographed at different sizes and angles](docs/images/samples-coccidiosis.png)
+
+*Five real photos from the collection the model learned from, all from chickens with Coccidiosis. A sick bird's droppings often look different (here yellow-brown), which is what the model learns to spot.*
+
+## What it does
+
+You take a photo of chicken droppings, and the program tells you whether the bird looks healthy or shows signs of
+one of two common diseases, Coccidiosis or Salmonella. It is an early warning, not a diagnosis: it tells a farmer
+which birds to have a vet check first.
+
+## A real-life example
+
+**Acme Poultry** is a small egg farm, and **Tom** walks the sheds every morning.
+
+- **Before:** Tom judged sick birds by eye. Early Coccidiosis and Salmonella are easy to miss, and lab tests take
+  time and cost money, so he either sent samples off "just in case" or waited until birds were visibly ill and the
+  disease had spread.
+- **With this project:** Tom photographs any droppings that look unusual on his phone and uploads the photo. The
+  program answers *Healthy*, *Coccidiosis* or *Salmonella*, with how sure it is. A disease result means he calls
+  the vet that day.
+- **After:** on 505 test photos the model had never seen, it labelled 84.8% correctly, and it caught 153 of the 162
+  Coccidiosis cases (94%). Its most common mistake is the safe kind: 41 of 183 healthy samples were flagged as
+  Salmonella, which costs Tom an extra vet check rather than a missed infection.
+
+## How you would use it
+
+The program runs in Google Colab, a free service that runs code in your web browser, so nothing needs installing.
+
+1. Put the photo collection (`Chicken_disease-2.zip`, described under [Prerequisites](#prerequisites)) in your Google
+   Drive, under **My Drive**.
+2. Click the **Open in Colab** button at the top of this page.
+3. Choose **Runtime > Run all** and allow access to your Google Drive when asked. The program studies the photos
+   and teaches itself what each disease looks like.
+4. When it reaches the upload step near the end, choose a photo of droppings from your computer or phone.
+5. Read the answer, for example *Predicted class: Healthy Chicken*, with a percentage that shows how sure it is.
+6. If it says Coccidiosis or Salmonella, have a vet check the bird.
+
+The technical setup, including running it on your own computer, is in [Getting started](#getting-started) further
+down.
+
+## At a glance
+
+A convolutional neural network (CNN, a type of AI model built for recognising patterns in images), trained from
+scratch in TensorFlow/Keras (Python libraries for building such models) on 2,536 photos, sorts each image into
+Coccidiosis, Salmonella or healthy with 84.8% validation accuracy (the share labelled correctly on photos held back
+from training). The notebook is also a complete computer-vision workflow for reviewers: data checks, augmentation,
+training and evaluation in one place.
 
 | | |
 |---|---|
 | **Problem** | 3-class image classification: Coccidiosis, healthy, Salmonella |
 | **Data** | 2,536 droppings photos (814 Coccidiosis, 919 healthy, 803 Salmonella): 2,031 train the model, 505 are held out for validation |
 | **Model** | CNN built from scratch: 3 convolution and max-pooling blocks, a 512-unit dense layer, dropout 0.5, softmax over 3 classes |
-| **Result** | **84.8% validation accuracy**, macro F1 0.83, one-vs-rest ROC-AUC 0.97 / 0.96 / 0.91 (Coccidiosis / healthy / Salmonella) |
+| **Result** | **84.8% validation accuracy**, macro F1 0.83 (a balance of missed cases and false alarms, averaged over the three classes), one-vs-rest ROC-AUC 0.97 / 0.96 / 0.91 (how well the model ranks each class above the others, where 1.0 is perfect and 0.5 is guessing; Coccidiosis / healthy / Salmonella) |
 
 ## Key features
 
@@ -26,10 +66,10 @@ computer-vision workflow for reviewers: data checks, augmentation, training and 
 - **A convolutional neural network trained from scratch** in Keras: no pretrained weights.
 - **Data checks before training:** images per class, height and width distributions, colour histograms per class, and a
   pass that removes files OpenCV can't read.
-- **On-the-fly augmentation** with `ImageDataGenerator`: random rotation, shifts, zoom and horizontal flips, so the
+- **On-the-fly augmentation** (making varied copies of each photo during training) with `ImageDataGenerator`: random rotation, shifts, zoom and horizontal flips, so the
   model learns the sample rather than the camera angle.
-- **Early stopping** on validation loss.
-- **Evaluation beyond accuracy:** per-class precision, recall and F1, a confusion matrix, one-vs-rest ROC curves and
+- **Early stopping** on validation loss: training stops once the model stops improving on photos it doesn't train on.
+- **Evaluation beyond accuracy:** per-class precision (how often a disease flag is right), recall (how many real cases are caught) and F1, a confusion matrix, one-vs-rest ROC curves and
   training curves.
 - **One notebook that runs on Google Colab,** reading the images from Google Drive.
 
@@ -99,6 +139,7 @@ Validation subset, 505 images:
 | Confusion matrix (validation, 505 images) | ROC curves, one-vs-rest |
 |---|---|
 | ![Confusion matrix with true classes as rows: cocci 153, 1, 8; healthy 5, 137, 41; salmo 21, 12, 127](docs/images/confusion-matrix.png) | ![ROC curves for the three classes: area 0.97 for cocci, 0.96 for healthy and 0.91 for salmo](docs/images/roc-curves.png) |
+| Each row is the true answer and each column the model's answer, so the diagonal counts the photos it got right. | The closer a curve hugs the top-left corner, the better the model tells that class apart from the other two. |
 
 - **Coccidiosis has the highest recall:** 153 of 162 cases are caught (94%).
 - **The most common error is a healthy sample predicted as Salmonella** (41 of 183 healthy samples). In a screening
